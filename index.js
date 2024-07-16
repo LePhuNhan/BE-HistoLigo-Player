@@ -13,8 +13,7 @@ dotenv.config();
 app.use(cookieParser());
 app.use(
   cors({
-    // origin: "http://localhost:5173", //need for cookies
-    origin:"",
+    origin:"http://localhost:8000",
     credentials: true, //need for cookies
   })
 );
