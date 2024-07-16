@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(
   cors({
     // origin: "http://localhost:5173", //need for cookies
-    origin:"https://web75-g3bakery.onrender.com",
+    origin:"",
     credentials: true, //need for cookies
   })
 );
