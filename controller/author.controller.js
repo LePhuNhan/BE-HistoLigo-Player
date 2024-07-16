@@ -1,4 +1,4 @@
-import UserModel from "../model/user.model.js";
+import UserModel from "../model/player.model.js";
 
 export const authorization = async (req, res) => {
   const { userId, accessToken, refreshToken } = req.user;

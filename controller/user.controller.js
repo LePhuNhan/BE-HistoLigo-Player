@@ -1,4 +1,4 @@
-import UserModel from "../model/user.model.js";
+import UserModel from "../model/player.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validator from "validator";
