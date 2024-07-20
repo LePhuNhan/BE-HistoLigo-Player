@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { getSession } from "../Utils/sessionHandler.js";
+import { getPlayer } from "../Utils/PlayerHandler.js";
 import { verifyJWT } from "../Utils/jwt.utils.js";
 
 const blacklisted = new Set();
@@ -19,7 +19,7 @@ const validToken = async (req, res, next) => {
     );
     if (user) {
       req.user = {
-        sessionId: user.sessionId,
+        PlayerId: user.PlayerId,
         userId: user.userId,
         access_token: accessToken,
         refresh_token: refreshToken,
@@ -33,10 +33,10 @@ const validToken = async (req, res, next) => {
   if (!refresh) {
     next();
   } else {
-    const session = await getSession(refresh.sessionId);
-    if (!session) next();
+    const Player = await getPlayer(refresh.PlayerId);
+    if (!Player) next();
     const newAccessToken = jwt.sign(
-      { sessionId: session._id, userId: session.userId },
+      { PlayerId: Player._id, userId: Player.userId },
       process.env.ACCESS_KEY,
       {
         expiresIn: "5m",
@@ -47,7 +47,7 @@ const validToken = async (req, res, next) => {
     });
     const decoded = verifyJWT(newAccessToken, process.env.ACCESS_KEY).payload;
     req.user = {
-      sessionId: decoded.sessionId,
+      PlayerId: decoded.PlayerId,
       userId: decoded.userId,
       access_token: newAccessToken,
       refresh_token: refreshToken,
