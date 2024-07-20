@@ -1,5 +1,5 @@
 import express from "express";
-import { addPlayerProfile, getPlayerProfile } from "../controller/playerProfile.controller.js";
+import { addPlayerProfile, getPlayerProfile, updatePlayerProfile } from "../controller/playerProfile.controller.js";
 import { tryCatch } from "../Utils/tryCatch.middleware.js";
 
 const playerRouter = express.Router();
@@ -10,6 +10,6 @@ playerRouter
 
 playerRouter
   .route("/:id")
-  .get(tryCatch(getPlayerProfile));
-
+  .get(tryCatch(getPlayerProfile))
+  .put(tryCatch(updatePlayerProfile));
 export default playerRouter;
