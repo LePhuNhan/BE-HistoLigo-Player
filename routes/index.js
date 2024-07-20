@@ -1,25 +1,17 @@
-import { userRouter } from "./user.route.js";
-import { validToken } from "../middlewares/validToken.middleware.js";
-import { requireUser } from "../middlewares/requireUser.middleware.js";
-// const router = express.Router();
+import express from "express";
+import playerRouter from "./player.route.js";
 
 const routes = [
   {
-    path: "/user",
-    router: userRouter,
+    path: "/player",
+    router: playerRouter,
   },
-  /* {
-    path: "/private",
-    router: defaultRouter,
-  }, */
 ];
 
-function routeFactory(app) {
-  routes.map((route) => {
-    if ((route.path === "/user")) {
-      app.use(route.path, route.router); //public route
+export function routeFactory(app) {
+  routes.forEach(route => {
+    if (route.path === "/player") {
+      app.use(route.path, route.router); // public route
     }
   });
 }
-
-export { routeFactory };
