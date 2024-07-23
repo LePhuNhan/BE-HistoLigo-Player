@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { getPlayer } from "../Utils/PlayerHandler.js";
-import { verifyJWT } from "../Utils/jwt.utils.js";
+import { getPlayer } from "../utils/PlayerHandler.js";
+import { verifyJWT } from "../utils/jwt.utils.js";
 
 const blacklisted = new Set();
 
