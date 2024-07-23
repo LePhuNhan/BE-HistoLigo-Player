@@ -1,70 +1,77 @@
-import { Maximize } from "@mui/icons-material";
 import mongoose from "mongoose";
 
 const PlayerSchema = mongoose.Schema({
-  playerId: {
-    type: mongoose.Types.ObjectId,
-    ref: "player",
-    maxlength:100
-  },
   fullname: {
-    type:String,
+    type: String,
+    maxlength: 100,
+    default: null,
   },
   dateOfBirth: {
-    type:Date,
+    type: Date,
+    default: null,
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    maxlength:250
+    maxlength: 250,
   },
   phoneNumber: {
     type: String,
-    maxlength:20
+    maxlength: 20,
+    default: null,
   },
   userName: {
     type: String,
     required: true,
-    maxlength:250
+    maxlength: 250,
+    default: null,
   },
   password: {
     type: String,
     required: true,
-    maxlength:250
+    maxlength: 250,
+    default: null,
   },
   avatar: {
-    type:String,
-    maxlength:1000
-  },
-  sex: {
-    type: Number,
-    enum: [0,1]
+    type: String,
+    maxlength: 1000,
+    default: null,
   },
   totalScore: {
-    type:Number,
+    type: Number,
+    default: null,
   },
   totalTime: {
-    type:Number,
-  },  
+    type: Number,
+    default: null,
+  },
   rank: {
-    type:Number,
-    enum: [0,1,2,3]
+    type: Number,
+    enum: [0, 1, 2, 3, 4],
+    default: 0,
+    // 0: "Beginner",
+    // 1: "Intermediate",
+    // 2: "Advanced",
+    // 3: "Expert",
+    // 4: "Master",
   },
   registrationDate: {
-    type:Date,
+    type: Date,
+    default: null,
   },
   status: {
     type: Number,
-    enum: [0,1]
+    enum: [0, 1],
+    default: 0,
   },
   locale: {
-    type:String,
-    maxlength:20
-  }
-    
+    type: String,
+    maxlength: 20,
+    default: null,
+  },
 });
 
-const PlayerModel = mongoose.model("player", PlayerSchema);
+const playerModel = mongoose.model("user", PlayerSchema);
 
-export default PlayerModel;
+export default playerModel;

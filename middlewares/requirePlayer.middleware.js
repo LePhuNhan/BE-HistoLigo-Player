@@ -1,4 +1,4 @@
-import { getPlayer } from "../Utils/PlayerHandler.js";
+import { getPlayer } from "../utils/PlayerHandler.js";
 
 const requirePlayer = async (req, res, next) => {
   const Player = await getPlayer(req.Player.PlayerId);

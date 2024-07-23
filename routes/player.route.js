@@ -1,12 +1,14 @@
 import express from "express";
-import { addPlayerProfile, getPlayerProfile, updatePlayerProfile } from "../controller/playerProfile.controller.js";
-import { tryCatch } from "../Utils/tryCatch.middleware.js";
+import {
+  addPlayerProfile,
+  getPlayerProfile,
+  updatePlayerProfile,
+} from "../controllers/playerProfile.controller.js";
+import { tryCatch } from "../utils/tryCatch.middleware.js";
 
 const playerRouter = express.Router();
 
-playerRouter
-  .route("/")
-  .post(tryCatch(addPlayerProfile));
+playerRouter.route("/").post(tryCatch(addPlayerProfile));
 
 playerRouter
   .route("/:id")
