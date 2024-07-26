@@ -4,7 +4,7 @@ import {
   getPlayerProfile,
   updatePlayerProfile,
 } from "../controllers/playerProfile.controller.js";
-import { tryCatch } from "../utils/tryCatch.middleware.js";
+import { tryCatch } from "../middlewares/tryCatch.middleware.js";
 
 const playerRouter = express.Router();
 

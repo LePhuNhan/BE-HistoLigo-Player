@@ -7,9 +7,12 @@ import cookieParser from "cookie-parser";
 import { routeFactory } from "./routes/index.js";
 import { validToken } from "./middlewares/validToken.middleware.js";
 
+
 dotenv.config();
 
+
 const app = express();
+
 
 app.use(cookieParser());
 app.use(
@@ -23,7 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(validToken);
 
+
 routeFactory(app);
+
 
 //Ngoc
 import middlewares from "./middlewares/player.middleware.js";

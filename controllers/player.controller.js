@@ -8,6 +8,7 @@ const userController = {
     try {
       const { userName, email, password, confirmPassword } = req.body;
 
+
       if (!userName) {
         return res
           .status(400)
@@ -27,6 +28,7 @@ const userController = {
           .json({ message: "Vui lòng nhập xác nhận lại mật khẩu!!" });
       }
 
+
       const existedUserName = await UserModel.findOne({ userName });
       if (existedUserName) {
         return res.status(400).json({ message: "UserName đã tồn tại!!" });
@@ -44,6 +46,7 @@ const userController = {
         createdAt,
       });
 
+
       res.status(201).json({
         data: createdUser,
         message: "Tạo tài khoản thành công",
@@ -57,6 +60,7 @@ const userController = {
     try {
       const { userName, password } = req.body;
 
+
       // Check if user exists
       const crrUser = await UserModel.findOne({ userName });
       if (!crrUser) {
@@ -64,6 +68,7 @@ const userController = {
           .status(401)
           .send({ message: "Sai tài khoản hoặc mật khẩu!" });
       }
+
 
       // Compare passwords
       const isPasswordValid = bcrypt.compareSync(password, crrUser.password);
@@ -73,12 +78,14 @@ const userController = {
           .send({ message: "Sai tài khoản hoặc mật khẩu!" });
       }
 
+
       // Remove sensitive information from user data
       const userResponse = {
         ...crrUser.toObject(),
       };
       delete userResponse.password;
       delete userResponse.salt;
+
 
       // Generate tokens
       const tkAt = token.generateToken(
@@ -99,6 +106,7 @@ const userController = {
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
       );
+
 
       // Send response
       res.status(200).send({
@@ -137,5 +145,6 @@ const userController = {
     }
   },
 };
+
 
 export default userController;

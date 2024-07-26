@@ -70,6 +70,13 @@ const PlayerSchema = mongoose.Schema({
     maxlength: 20,
     default: null,
   },
+  sex:{
+    type: Number,
+    enum: [0, 1],
+    default: 1,
+    // 0: "Female",
+    // 1: "Male",
+  }
 });
 
 const playerModel = mongoose.model("user", PlayerSchema);
