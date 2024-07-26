@@ -6,18 +6,17 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { routeFactory } from "./routes/index.js";
 import { validToken } from "./middlewares/validToken.middleware.js";
-
-
+import middlewares from "./middlewares/player.middleware.js";
+import rootRouter from "./routes/index.route.js";
+import { token } from "./utils/token.js";
 dotenv.config();
 
-
 const app = express();
-
 
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:8000",
+    origin: "http://localhost:3000",
     credentials: true, // need for cookies
   })
 );
@@ -26,14 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(validToken);
 
-
 routeFactory(app);
-
-
-//Ngoc
-import middlewares from "./middlewares/player.middleware.js";
-import rootRouter from "./routes/index.route.js";
-import { token } from "./utils/token.js";
 app.use("/api/v1", rootRouter);
 app.get("/api/v1/verify", middlewares.verifyJwt(true), (req, res) => {
   // kiểm tra xem token giải mã xong có phải là RT
