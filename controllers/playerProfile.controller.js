@@ -1,7 +1,6 @@
 import PlayerModel from "../models/player.model.js";
 
 //coi dùng joi để middleware
-//bỏ cái này khi có authen login
 export const addPlayerProfile = async (req, res, next) => {
   try {
     const player = new PlayerModel(req.body);
