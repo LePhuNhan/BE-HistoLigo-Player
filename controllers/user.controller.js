@@ -2,7 +2,11 @@ import UserModel from "../models/player.model.js";
 import bcrypt from "bcrypt";
 import { token } from "../utils/token.js";
 import dotenv from "dotenv";
+import t from "../utils/localization.util.js"
+
 dotenv.config();
+
+// dung joi de validation login vs register
 const userController = {
   createUser: async (req, res) => {
     try {
@@ -75,7 +79,8 @@ const userController = {
       if (!isPasswordValid) {
         return res
           .status(401)
-          .send({ message: "Sai tài khoản hoặc mật khẩu!" });
+          .send({ message: t(req.contentLanguage, "auth.invalidCredential") });
+          
       }
 
 

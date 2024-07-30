@@ -5,14 +5,19 @@ import {
   updatePlayerProfile,
 } from "../controllers/playerProfile.controller.js";
 import { tryCatch } from "../middlewares/tryCatch.middleware.js";
-import middlewares from "../middlewares/player.middleware.js";
+import {
+  verifyToken,
+  validateLoginRequest,
+} from "../middlewares/auth.middleware.js";
 const playerRouter = express.Router();
 
-playerRouter.route("/").post(tryCatch(addPlayerProfile));
+playerRouter
+  .route("/")
+  .post(tryCatch(addPlayerProfile))
+  .get(verifyToken, tryCatch(getPlayerProfile));
 
 playerRouter
   .route("/:id")
   .get(tryCatch(getPlayerProfile))
-  // .get(middlewares.verifyJwt(),tryCatch(getPlayerProfile))
   .put(tryCatch(updatePlayerProfile));
 export default playerRouter;

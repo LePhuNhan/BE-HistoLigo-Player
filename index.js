@@ -9,6 +9,8 @@ import { validToken } from "./middlewares/validToken.middleware.js";
 import middlewares from "./middlewares/player.middleware.js";
 import rootRouter from "./routes/index.route.js";
 import { token } from "./utils/token.js";
+import { initLocaleData } from "./localization.js";
+
 dotenv.config();
 
 const app = express();
@@ -17,18 +19,20 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:3000",
-    credentials: true, // need for cookies
+    credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 app.use(morgan("combined"));
 app.use(validToken);
 
 routeFactory(app);
+
 app.use("/api/v1", rootRouter);
 app.get("/api/v1/verify", middlewares.verifyJwt(true), (req, res) => {
-  // kiểm tra xem token giải mã xong có phải là RT
   try {
     const newAT = token.generateToken({
       _id: req.dataToken._id,
@@ -47,9 +51,11 @@ app.get("/api/v1/verify", middlewares.verifyJwt(true), (req, res) => {
     });
   }
 });
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
+    initLocaleData();
     app.listen(process.env.PORT, () => {
       console.log("Server is running on port", process.env.PORT);
     });
