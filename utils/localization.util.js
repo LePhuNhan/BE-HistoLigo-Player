@@ -20,5 +20,10 @@ const t= (language, path, values={})=>{
     
     return target;
 }
-
+export const applyRequestLanguage= (req)=>{
+    const contentLanguage=req.contentLanguage;
+    return (path, values)=>{
+        return t(contentLanguage, path, values);
+    }
+}
 export default t;
