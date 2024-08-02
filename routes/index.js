@@ -4,6 +4,8 @@ import loadRequestContentLanguage from "../middlewares/localization.middleware.j
 import topicRouter from "./topic.route.js";
 import languageRouter from "./topic.route.js";
 import countryRouter from "./country.route.js";
+import documentationRouter from "./documentation.route.js";
+import testRouter from "./test.route.js";
 const routes = [
   {
     path: "/player",
@@ -21,6 +23,14 @@ const routes = [
     path: "/country",
     router: countryRouter,
   },
+  {
+    path: "/documentation",
+    router: documentationRouter,
+  },
+  {
+    path: "/test",
+    router: testRouter,
+  },
 ];
 
 export function routeFactory(app) {
@@ -35,6 +45,12 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/country") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/documentation") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/test") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });

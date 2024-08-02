@@ -70,7 +70,7 @@ const userController = {
       if (!crrUser) {
         return res
           .status(401)
-          .send({ message: "Sai tài khoản hoặc mật khẩu!" });
+          .send({ message: t(req.contentLanguage, "auth.invalidCredential") });
       }
 
 
