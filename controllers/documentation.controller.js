@@ -1,10 +1,23 @@
-import Documentation from '../models/documentation.model.js';
+import Documentation from "../models/documentation.model.js";
 
 export const createDocumentation = async (req, res) => {
   try {
     const documentation = new Documentation(req.body);
+    const { name, content } = req.body;
+    const existingDocumentation = await Documentation.findOne({
+      name,
+      content,
+    });
+    if (existingDocumentation) {
+      return res.status(400).json({ message: "Documentation already exists" });
+    }
     const savedDocumentation = await documentation.save();
-    res.status(201).json(savedDocumentation);
+    res
+      .status(201)
+      .json({
+        message: "Documentation created successfully",
+        savedDocumentation,
+      });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -23,7 +36,7 @@ export const getDocumentationById = async (req, res) => {
   try {
     const documentation = await Documentation.findById(req.params.id);
     if (!documentation) {
-      return res.status(404).json({ message: 'Documentation not found' });
+      return res.status(404).json({ message: "Documentation not found" });
     }
     res.status(200).json(documentation);
   } catch (error) {
@@ -33,15 +46,24 @@ export const getDocumentationById = async (req, res) => {
 
 export const updateDocumentation = async (req, res) => {
   try {
+    const { name } = req.body;
+    const existingDocumentation = await Documentation.findOne({
+      name,
+    });
+    if (existingDocumentation) {
+      return res.status(400).json({ message: "Already have this name" });
+    }
     const documentation = await Documentation.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
     if (!documentation) {
-      return res.status(404).json({ message: 'Documentation not found' });
+      return res.status(404).json({ message: "Documentation not found" });
     }
-    res.status(200).json(documentation);
+    res
+      .status(200)
+      .json({ message: "Documentation updated successfully", documentation });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -51,9 +73,9 @@ export const deleteDocumentation = async (req, res) => {
   try {
     const documentation = await Documentation.findByIdAndDelete(req.params.id);
     if (!documentation) {
-      return res.status(404).json({ message: 'Documentation not found' });
+      return res.status(404).json({ message: "Documentation not found" });
     }
-    res.status(200).json({ message: 'Documentation deleted successfully' });
+    res.status(200).json({ message: "Documentation deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -88,7 +88,7 @@ export const updateCountry = async (req, res) => {
         }
 
         // Check for unique name
-        const existingCountry = await Country.findOne({ name, _id: { $ne: id } });
+        const existingCountry = await Country.findOne({ name});
         if (existingCountry) {
             return res.status(400).json({ message: "Country name already exists" });
         }

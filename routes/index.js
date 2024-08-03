@@ -1,4 +1,3 @@
-import express from "express";
 import playerRouter from "./player.route.js";
 import loadRequestContentLanguage from "../middlewares/localization.middleware.js"
 import topicRouter from "./topic.route.js";
@@ -6,6 +5,7 @@ import languageRouter from "./topic.route.js";
 import countryRouter from "./country.route.js";
 import documentationRouter from "./documentation.route.js";
 import testRouter from "./test.route.js";
+import playerProcessRouter from "./playerProcess.route.js";
 const routes = [
   {
     path: "/player",
@@ -31,6 +31,10 @@ const routes = [
     path: "/test",
     router: testRouter,
   },
+  {
+    path: "/playerProcess",
+    router: playerProcessRouter,
+  },
 ];
 
 export function routeFactory(app) {
@@ -51,6 +55,9 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/test") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/playerProcess") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });

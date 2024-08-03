@@ -1,4 +1,4 @@
-import UserModel from "../models/player.model.js";
+import playerModel from "../models/player.model.js";
 import bcrypt from "bcrypt";
 import { token } from "../utils/token.js";
 import dotenv from "dotenv";
@@ -33,7 +33,7 @@ const userController = {
       }
 
 
-      const existedUserName = await UserModel.findOne({ userName });
+      const existedUserName = await playerModel.findOne({ userName });
       if (existedUserName) {
         return res.status(400).json({ message: "UserName đã tồn tại!!" });
       }
@@ -42,7 +42,7 @@ const userController = {
       //thực hiện mã hóa
       const hash = bcrypt.hashSync(password, salt);
       const createdAt = new Date();
-      const createdUser = await UserModel.create({
+      const createdUser = await playerModel.create({
         userName,
         email,
         password: hash,
@@ -66,7 +66,7 @@ const userController = {
 
 
       // Check if user exists
-      const crrUser = await UserModel.findOne({ userName });
+      const crrUser = await playerModel.findOne({ userName });
       if (!crrUser) {
         return res
           .status(401)
@@ -137,7 +137,7 @@ const userController = {
     try {
       const { id } = req.params;
       console.log(req.dataToken);
-      const crrUser = await UserModel.findById(id);
+      const crrUser = await playerModel.findById(id);
       if (!crrUser) throw new Error("Không tồn tại thông tin người dùng!");
       res.status(200).send({
         data: crrUser,

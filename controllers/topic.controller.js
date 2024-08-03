@@ -32,7 +32,7 @@ export const createTopic = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
+// sau này đổi sang header thử en-US để đổi topic theo language trong localStorage
 export const getTopics = async (req, res) => {
     try {
         const topics = await Topic.find().populate('countryId');
@@ -82,7 +82,10 @@ export const updateTopic = async (req, res) => {
         if (![0, 1].includes(status)) {
             return res.status(400).json({ message: "Status must be 0 or 1" });
         }
-
+        const existingTopic = await Topic.findOne({ name});
+        if (existingTopic) {
+            return res.status(400).json({ message: "Topic name already exists" });
+        }
         const updatedTopic = await Topic.findByIdAndUpdate(
             id,
             { name, description, image, countryId, status, localeData },

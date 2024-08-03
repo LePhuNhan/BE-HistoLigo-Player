@@ -5,6 +5,11 @@ import PlayerModel from "../models/player.model.js";
 export const addPlayerProfile = async (req, res, next) => {
   try {
     const player = new PlayerModel(req.body);
+    const {email, username}=req.body
+    const existedPlayer = await PlayerModel.findOne({ email, username});
+      if (existedPlayer) {
+        return res.status(400).json({ message: "Player already exists!" });
+      }
     await player.save();
     res.status(201).json({ message: "Player created successfully", player });
   } catch (error) {
@@ -25,9 +30,13 @@ export const getPlayerProfile = async (req, res, next) => {
   }
 };
 
-// thêm update img từ local
 export const updatePlayerProfile = async (req, res, next) => {
   try {
+    const {email, username}=req.body
+    const existedPlayer = await PlayerModel.findOne({ email, username});
+      if (existedPlayer) {
+        return res.status(400).json({ message: "Already have this email, username!" });
+      }
     const player = await PlayerModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password');
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
