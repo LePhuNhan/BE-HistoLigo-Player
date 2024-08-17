@@ -68,10 +68,14 @@ const matchingSchema = new Schema({
         required: true,
     },
     answer: {
-        type: [[Number]],
+        type: [{
+            leftColumn: { type: String, required: true },
+            rightColumn: { type: String, required: true }
+        }],
         required: true,
     },
 });
+
 
 // Fill-in-the-Blank Question
 const fillInTheBlankSchema = new Schema({

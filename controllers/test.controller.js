@@ -29,7 +29,15 @@ export const createTest = async (req, res) => {
 
 export const getAllTests = async (req, res) => {
   try {
-    const tests = await Test.find().populate("topicId countryId");
+    const tests = await Test.find();
+    const contentLanguage=req.contentLanguage;
+    for (const test of tests ) {
+      if(contentLanguage){
+        test.name=test.localeData[contentLanguage]?.name;
+        test.localeData=undefined;
+      }
+      
+    }
     res.status(200).json(tests);
   } catch (error) {
     res.status(500).json({ message: "Failed to get tests", error });
@@ -39,7 +47,12 @@ export const getAllTests = async (req, res) => {
 export const getTestById = async (req, res) => {
   const { id } = req.params;
   try {
-    const test = await Test.findById(id).populate("topicId countryId");
+    const test = await Test.findById(id);
+    const contentLanguage=req.contentLanguage;
+    if(contentLanguage){
+      test.name=test.localeData[contentLanguage]?.name;
+      test.localeData=undefined;
+    }
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
@@ -51,7 +64,7 @@ export const getTestById = async (req, res) => {
 
 export const updateTest = async (req, res) => {
   const { id } = req.params;
-  const { name, createdBy, questionNumber, topicId, countryId, status } =
+  const { name, createdBy, questionNumber, topicId, countryId, status, localeData } =
     req.body;
   try {
     const existingTest = await Test.findOne({
@@ -62,7 +75,7 @@ export const updateTest = async (req, res) => {
     }
     const updatedTest = await Test.findByIdAndUpdate(
       id,
-      { name, createdBy, questionNumber, topicId, countryId, status },
+      { name, createdBy, questionNumber, topicId, countryId, status, localeData },
       { new: true, runValidators: true }
     );
     if (!updatedTest) {
@@ -86,3 +99,29 @@ export const deleteTest = async (req, res) => {
     res.status(500).json({ message: "Failed to delete test", error });
   }
 };
+export const getTestsByTopicId = async (req, res) => {
+  const { topicId } = req.params;
+
+  try {
+    const tests = await Test.find({ topicId });
+
+    const contentLanguage = req.contentLanguage;
+    if (contentLanguage) {
+      for (const test of tests) {
+        test.name = test.localeData[contentLanguage]?.name;
+        test.localeData = undefined;
+      }
+    }
+
+    if (!tests.length) {
+      return res.status(404).json({ message: "No tests found for this topic" });
+    }
+
+    res.status(200).json(tests);
+  } catch (error) {
+    console.error("Error in getTestsByTopicId:", error);
+
+    res.status(500).json({ message: "Failed to get tests by topic", error: error.message || error });
+  }
+};
+

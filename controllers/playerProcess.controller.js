@@ -1,7 +1,7 @@
 import PlayerProcess from "../models/playerProcess.model.js";
 
 export const createPlayerProcess = async (req, res) => {
-  const { playerId, countryId, topics } = req.body;
+  const { playerId, countryId, topics, tests } = req.body;
 
   try {
     const existingPlayerProcess = await PlayerProcess.findOne({
@@ -14,6 +14,7 @@ export const createPlayerProcess = async (req, res) => {
       playerId,
       countryId,
       topics,
+      tests
     });
 
     const savedPlayerProcess = await newPlayerProcess.save();
@@ -29,10 +30,7 @@ export const createPlayerProcess = async (req, res) => {
 export const getPlayerProcessById = async (req, res) => {
   const id = req.params;
   try {
-    const playerProcess = await PlayerProcess.findById(id).populate(
-      "countryId"
-    );
-
+    const playerProcess = await PlayerProcess.findById(id);
     if (!playerProcess) {
       return res.status(404).json({ message: "Player process not found" });
     }
@@ -46,7 +44,7 @@ export const getPlayerProcessById = async (req, res) => {
 export const updatePlayerProcessById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { playerId, countryId, topics } = req.body;
+    const { playerId, countryId, topics, tests } = req.body;
     const existingPlayerProcess = await PlayerProcess.findOne({
       playerId,
     });
@@ -55,7 +53,7 @@ export const updatePlayerProcessById = async (req, res) => {
     }
     const updatedPlayerProcess = await PlayerProcess.findByIdAndUpdate(
       id,
-      { playerId, countryId, topics },
+      { playerId, countryId, topics, tests },
       { new: true }
     );
 
@@ -92,7 +90,7 @@ export const getAllPlayerProcesses = async (req, res) => {
     try {
       const playerId = req.user._id;
   
-      const playerProcesses = await PlayerProcess.findOne({ playerId }).populate("countryId");
+      const playerProcesses = await PlayerProcess.findOne({ playerId });
   
       if (!playerProcesses) {
         return res.status(404).json({ message: "Player process not found" });

@@ -6,6 +6,8 @@ import countryRouter from "./country.route.js";
 import documentationRouter from "./documentation.route.js";
 import testRouter from "./test.route.js";
 import playerProcessRouter from "./playerProcess.route.js";
+import questionRouter from "./question.route.js"
+
 const routes = [
   {
     path: "/player",
@@ -35,6 +37,10 @@ const routes = [
     path: "/playerProcess",
     router: playerProcessRouter,
   },
+  {
+    path: "/question",
+    router: questionRouter,
+  },
 ];
 
 export function routeFactory(app) {
@@ -58,6 +64,9 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/playerProcess") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/question") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });

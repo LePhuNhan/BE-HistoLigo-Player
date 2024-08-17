@@ -25,7 +25,16 @@ export const createDocumentation = async (req, res) => {
 
 export const getAllDocumentation = async (req, res) => {
   try {
-    const documentations = await Documentation.find();
+    const documentations = await Documentation.find().select('-content');
+    // ko lay localeData
+    const contentLanguage=req.contentLanguage;
+    for (const documentation of documentations ) {
+      if(contentLanguage){
+        documentation.name=documentation.localeData[contentLanguage]?.name;
+        documentation.localeData=undefined;
+      }
+      
+    }
     res.status(200).json(documentations);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -35,6 +44,12 @@ export const getAllDocumentation = async (req, res) => {
 export const getDocumentationById = async (req, res) => {
   try {
     const documentation = await Documentation.findById(req.params.id);
+    const contentLanguage=req.contentLanguage;
+    if(contentLanguage){
+      documentation.name=documentation.localeData[contentLanguage]?.name;
+      documentation.content=documentation.localeData[contentLanguage]?.content;
+      documentation.localeData=undefined;
+    }
     if (!documentation) {
       return res.status(404).json({ message: "Documentation not found" });
     }
