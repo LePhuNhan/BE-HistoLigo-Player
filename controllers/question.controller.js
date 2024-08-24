@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Test from "../models/test.model.js";
 import { BaseQuestion } from "../models/question.model.js";
 
@@ -59,26 +60,34 @@ export const checkAnswers = async (req, res) => {
     }
 };
 
-
 export const getTestDetailsAndQuestions = async (req, res) => {
     try {
         const { testId } = req.params;
 
-        // Fetch test details
-        const test = await Test.findById(testId)
+        const test = await Test.findById(testId);
 
         if (!test) {
             return res.status(404).json({ message: "Test not found" });
         }
 
-        // Fetch questions associated with the test
-        const questions = await BaseQuestion.find({ topicId: test.topicId, countryId: test.countryId });
+        console.log('Test found:', test);
+        console.log('Questions IDs:', test.questionsId);
+        if (!test.questionsId || !Array.isArray(test.questionsId)) {
+            return res.status(400).json({ message: "Invalid questionsId" });
+        }
+
+        const questions = await BaseQuestion.find({
+            _id: { $in: test.questionsId },
+        });
+
+        console.log('Questions found:', questions);
 
         return res.status(200).json({
             test,
             questions,
         });
     } catch (error) {
+        console.error('Error:', error);
         return res.status(500).json({ message: error.message });
     }
 };

@@ -1,5 +1,5 @@
 import PlayerProcess from "../models/playerProcess.model.js";
-
+import Topic from "../models/topic.model.js"
 export const createPlayerProcess = async (req, res) => {
   const { playerId, countryId, topics, tests } = req.body;
 
@@ -27,17 +27,59 @@ export const createPlayerProcess = async (req, res) => {
   }
 };
 
-export const getPlayerProcessById = async (req, res) => {
-  const id = req.params;
+export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
   try {
-    const playerProcess = await PlayerProcess.findById(id);
-    if (!playerProcess) {
+      const playerId = req.user._id;
+      const playerProcesses = await PlayerProcess.findOne({ playerId });
+
+      if (!playerProcesses) {
+          return res.status(404).json({ message: "Player process not found" });
+      }
+
+      const topics = await Topic.find().populate('countryId');
+      
+      const playerTopicProgressMap = new Map();
+      playerProcesses.topics.forEach(topic => {
+          playerTopicProgressMap.set(topic.topicId.toString(), topic);
+      });
+
+      const combinedTopics = topics.map(topic => {
+          const progress = playerTopicProgressMap.get(topic._id.toString());
+
+          return {
+              _id: topic._id,
+              name: topic.name,
+              description: topic.description,
+              image: topic.image,
+              countryId: topic.countryId ? topic.countryId._id : null,
+              status: topic.status,
+              totalTest: progress ? progress.totalTest : 0,
+              doneTest: progress ? progress.doneTest : 0,
+              createdAt: topic.createdAt,
+              updatedAt: topic.updatedAt,
+              __v: topic.__v
+          };
+      });
+
+      res.status(200).json(combinedTopics);
+  } catch (error) {
+      res.status(500).json({ message: "Error fetching combined topics", error: error.message });
+  }
+};
+
+export const getAllPlayerProcesses = async (req, res) => {
+  try {
+    const playerId = req.user._id;
+
+    const playerProcesses = await PlayerProcess.findOne({ playerId });
+
+    if (!playerProcesses) {
       return res.status(404).json({ message: "Player process not found" });
     }
 
-    res.status(200).json(playerProcess);
+    res.status(200).json(playerProcesses);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching player process", error });
+    res.status(500).json({ message: "Error fetching player processes", error: error.message });
   }
 };
 
@@ -86,19 +128,5 @@ export const deletePlayerProcessById = async (req, res) => {
   }
 };
 
-export const getAllPlayerProcesses = async (req, res) => {
-    try {
-      const playerId = req.user._id;
-  
-      const playerProcesses = await PlayerProcess.findOne({ playerId });
-  
-      if (!playerProcesses) {
-        return res.status(404).json({ message: "Player process not found" });
-      }
-  
-      res.status(200).json(playerProcesses);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching player processes", error: error.message });
-    }
-  };
+
   
