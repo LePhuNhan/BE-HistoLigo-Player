@@ -77,8 +77,8 @@ const PlayerSchema = mongoose.Schema({
     // 0: "Female",
     // 1: "Male",
   }
-});
+},{ collection: "players" });
 
-const playerModel = mongoose.model("user", PlayerSchema);
+const playerModel = mongoose.model("Player", PlayerSchema);
 
 export default playerModel;

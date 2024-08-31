@@ -116,7 +116,7 @@ const userController = {
       // Send response
       res.status(200).send({
         data: {
-          user: userResponse,
+          player: userResponse,
           accessToken: tkAt,
           refreshToken: tkRf,
         },

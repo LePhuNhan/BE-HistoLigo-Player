@@ -1,5 +1,5 @@
 import { Router } from "express";
-import UserRouter from "./user.route.js";
+import UserRouter from "./player.route.js";
 import loadRequestContentLanguage from "../middlewares/localization.middleware.js"
 const rootRouterV1 = Router();
 

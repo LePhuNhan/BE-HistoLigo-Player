@@ -1,23 +1,17 @@
-import express from "express";
-import {
-  addPlayerProfile,
-  getPlayerProfile,
-  updatePlayerProfile,
-} from "../controllers/playerProfile.controller.js";
-import { tryCatch } from "../middlewares/tryCatch.middleware.js";
-import {
-  verifyToken,
-  validateLoginRequest,
-} from "../middlewares/auth.middleware.js";
-const playerRouter = express.Router();
+import { Router } from "express";
+import userController from "../controllers/player.controller.js";
+import middlewares from "../middlewares/player.middleware.js";
+import { verifyToken, validateLoginRequest } from '../middlewares/auth.middleware.js';
+const UserRouter = Router();
 
-playerRouter
-  .route("/")
-  .post(tryCatch(addPlayerProfile))
-  .get(verifyToken, tryCatch(getPlayerProfile));
+UserRouter.get(
+  "/users/:id",
+  middlewares.verifyJwt(),
+  userController.getOneUser
+);
 
-playerRouter
-  .route("/:id")
-  .get(tryCatch(getPlayerProfile))
-  .put(tryCatch(updatePlayerProfile));
-export default playerRouter;
+UserRouter.post("/users", userController.createUser, middlewares.verifyJwt());
+UserRouter.post("/login", validateLoginRequest, userController.login);
+UserRouter.post("/logout", userController.logout);
+
+export default UserRouter;

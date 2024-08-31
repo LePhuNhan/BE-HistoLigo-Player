@@ -5,7 +5,7 @@ const { Schema, model } = mongoose;
 const feedbackSchema = new Schema({
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Player",
         required: true,
     },
     content: {

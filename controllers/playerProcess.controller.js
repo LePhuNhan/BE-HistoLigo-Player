@@ -29,9 +29,12 @@ export const createPlayerProcess = async (req, res) => {
 
 export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
   try {
-      const playerId = req.user._id;
-      const playerProcesses = await PlayerProcess.findOne({ playerId });
 
+      const playerId = req.user._id;
+
+
+      const playerProcesses = await PlayerProcess.findOne({ playerId });
+      console.log(playerProcesses);
       if (!playerProcesses) {
           return res.status(404).json({ message: "Player process not found" });
       }

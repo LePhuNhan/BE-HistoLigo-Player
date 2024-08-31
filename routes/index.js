@@ -1,4 +1,4 @@
-import playerRouter from "./player.route.js";
+import playerRouter from "./playerProfile.route.js";
 import loadRequestContentLanguage from "../middlewares/localization.middleware.js"
 import topicRouter from "./topic.route.js";
 import languageRouter from "./topic.route.js";
@@ -7,6 +7,8 @@ import documentationRouter from "./documentation.route.js";
 import testRouter from "./test.route.js";
 import playerProcessRouter from "./playerProcess.route.js";
 import questionRouter from "./question.route.js"
+import PlayerTestRouter from "./playerTest.route.js";
+import FeedbackRouter from "./feedback.route.js"
 
 const routes = [
   {
@@ -41,6 +43,14 @@ const routes = [
     path: "/question",
     router: questionRouter,
   },
+  {
+    path: "/playerTest",
+    router: PlayerTestRouter
+  },
+  {
+    path: "/feedback",
+    router: FeedbackRouter
+  }
 ];
 
 export function routeFactory(app) {
@@ -67,6 +77,12 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/question") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/playerTest") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/feedback") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });
