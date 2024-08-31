@@ -15,7 +15,8 @@ export const createOrUpdatePlayerTest = async (req, res) => {
     const existingPlayerTest = await PlayerTest.findOne({ testId, playerId });
 
     if (existingPlayerTest) {
-      const createdAt = moment(existingPlayerTest.createdAt);
+      const correctAnswersCount = questions.filter(q => q.isCorrect).length;
+      const createdAt = moment();
       const updatedAt = moment();
       const newTime = moment.duration(updatedAt.diff(createdAt)).asSeconds();
       const newDoneAt = updatedAt.toISOString();
@@ -28,7 +29,6 @@ export const createOrUpdatePlayerTest = async (req, res) => {
 
       return res.status(200).json(updatedPlayerTest);
     } else {
-      // Create a new PlayerTest
       const newPlayerTest = new PlayerTest({
         playerId,
         testId,
@@ -104,7 +104,7 @@ export const updatePlayerTest = async (req, res) => {
       const correctAnswersCount = questions.filter(q => q.isCorrect).length;
       const score = (correctAnswersCount / questions.length) * 100;
   
-      const createdAt = moment(playerTest.createdAt);
+      const createdAt = moment(playerTest.updatedAt);
       const updatedAt = moment();
       const time = moment.duration(updatedAt.diff(createdAt)).asSeconds();
       const doneAt = updatedAt.toISOString();

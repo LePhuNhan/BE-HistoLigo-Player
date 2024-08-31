@@ -1,18 +1,16 @@
-// sửa playerProcess, làm playerTest trong group zalo
-// khi bắt đầu làm test, tạo 1 playerTest, khi bấm answer sẽ update cái mới tạo
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const playerTestSchema = new Schema(
   {
     playerId: {
       type: Schema.Types.ObjectId,
-      ref: "Player",
+      ref: 'Player',
       required: true,
     },
     testId: {
       type: Schema.Types.ObjectId,
-      ref: "Test",
+      ref: 'Test',
       required: true,
     },
     score: {
@@ -31,24 +29,26 @@ const playerTestSchema = new Schema(
       required: true,
     },
     questions: [
-        {
-          questionId: {
-            type: Schema.Types.ObjectId,
-            ref: "Question",
-            required: true,
-          },
-          answer: {
-            type: Schema.Types.Mixed,
-          },
-          isCorrect: {
-            type: Boolean,
-          },
-        }
-      ]
+      {
+        questionId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Question',
+          required: true,
+        },
+        answer: {
+          type: Schema.Types.Mixed,
+        },
+        isCorrect: {
+          type: Boolean,
+        },
+      },
+    ],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
-const PlayerTest = model("PlayerTest", playerTestSchema);
+const PlayerTest = model('PlayerTest', playerTestSchema);
 
 export default PlayerTest;
