@@ -64,25 +64,21 @@ const userController = {
     try {
       const { userName, password } = req.body;
 
-
       // Check if user exists
       const crrUser = await playerModel.findOne({ userName });
       if (!crrUser) {
-        return res
-          .status(401)
-          .send({ message: t(req.contentLanguage, "auth.invalidCredential") });
+        return res.status(401).json({
+          message: t(req.contentLanguage || 'vi', "Sai tài khoản")
+        });
       }
-
 
       // Compare passwords
       const isPasswordValid = bcrypt.compareSync(password, crrUser.password);
       if (!isPasswordValid) {
-        return res
-          .status(401)
-          .send({ message: t(req.contentLanguage, "auth.invalidCredential") });
-          
+        return res.status(401).json({
+          message: t(req.contentLanguage || 'vi', "Sai mật khẩu")
+        });
       }
-
 
       // Remove sensitive information from user data
       const userResponse = {
@@ -90,7 +86,6 @@ const userController = {
       };
       delete userResponse.password;
       delete userResponse.salt;
-
 
       // Generate tokens
       const tkAt = token.generateToken(
@@ -112,9 +107,8 @@ const userController = {
         { expiresIn: "2h" }
       );
 
-
       // Send response
-      res.status(200).send({
+      res.status(200).json({
         data: {
           player: userResponse,
           accessToken: tkAt,
@@ -123,9 +117,7 @@ const userController = {
         message: "Đăng nhập thành công",
       });
     } catch (error) {
-      res.status(500).send({
-        message: error.message,
-      });
+      res.status(500).json({ message: "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau." });
     }
   },
   logout: async (req, res) => {

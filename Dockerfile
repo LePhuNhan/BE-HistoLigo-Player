@@ -14,4 +14,4 @@ COPY . .
 
 RUN npm install
 
-ENTRYPOINT [ "npm", "run", "dev" ]
+ENTRYPOINT [ "npm", "start" ]
