@@ -20,17 +20,6 @@ const t= (language, path, values={})=>{
     
     return target;
 }
-const translations = {
-    en: {
-      "Sai tài khoản": "Incorrect username",
-      "Sai mật khẩu": "Incorrect password",
-    },
-    vi: {
-      "Sai tài khoản": "Sai tài khoản",
-      "Sai mật khẩu": "Sai mật khẩu",
-    },
-    // Add other languages here...
-  };
 export const applyRequestLanguage= (req)=>{
     const contentLanguage=req.contentLanguage;
     return (path, values)=>{
