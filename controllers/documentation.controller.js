@@ -44,20 +44,25 @@ export const getAllDocumentation = async (req, res) => {
 export const getDocumentationById = async (req, res) => {
   try {
     const documentation = await Documentation.findById(req.params.id);
-    const contentLanguage=req.contentLanguage;
-    if(contentLanguage){
-      documentation.name=documentation.localeData[contentLanguage]?.name;
-      documentation.content=documentation.localeData[contentLanguage]?.content;
-      documentation.localeData=undefined;
-    }
+
     if (!documentation) {
       return res.status(404).json({ message: "Documentation not found" });
     }
+
+    const contentLanguage = req.contentLanguage;
+
+    if (contentLanguage) {
+      documentation.name = documentation.localeData[contentLanguage]?.name;
+      documentation.content = documentation.localeData[contentLanguage]?.content;
+      documentation.localeData = undefined;
+    }
+
     res.status(200).json(documentation);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const updateDocumentation = async (req, res) => {
   try {
@@ -93,5 +98,30 @@ export const deleteDocumentation = async (req, res) => {
     res.status(200).json({ message: "Documentation deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+export const getDocumentsByTopicId = async (req, res) => {
+  const { topicId } = req.params;
+
+  try {
+    const documents = await Documentation.find({ topicId });
+
+    const contentLanguage = req.contentLanguage;
+    if (contentLanguage) {
+      for (const test of documents) {
+        test.name = test.localeData[contentLanguage]?.name;
+        test.localeData = undefined;
+      }
+    }
+
+    if (!documents.length) {
+      return res.status(404).json({ message: "No documents found for this topic" });
+    }
+
+    res.status(200).json(documents);
+  } catch (error) {
+    console.error("Error in getDocumentsByTopicId:", error);
+
+    res.status(500).json({ message: "Failed to get documents by topic", error: error.message || error });
   }
 };
