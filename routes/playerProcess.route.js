@@ -5,6 +5,7 @@ import {
   getCombinedTopicsWithPlayerProgress,
   updatePlayerProcessById,
   deletePlayerProcessById,
+  updatePlayerProcessWithPlayerId,
 } from "../controllers/playerProcess.controller.js";
 import { tryCatch } from "../middlewares/tryCatch.middleware.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
@@ -17,11 +18,13 @@ playerProcessRouter
   .post(tryCatch(createPlayerProcess));
 
 playerProcessRouter
+  .route("/combindedTopic")
+  .get(verifyToken, tryCatch(getCombinedTopicsWithPlayerProgress))
+  .put(verifyToken, tryCatch(updatePlayerProcessWithPlayerId));
+  
+playerProcessRouter
   .route("/:id")
   .put(tryCatch(updatePlayerProcessById))
   .delete(tryCatch(deletePlayerProcessById));
 
-playerProcessRouter
-  .route("/combindedTopic")
-  .get(verifyToken, tryCatch(getCombinedTopicsWithPlayerProgress));
 export default playerProcessRouter;

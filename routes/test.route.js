@@ -11,8 +11,8 @@ import { tryCatch } from "../middlewares/tryCatch.middleware.js";
 
 const testRouter = express.Router();
 
-testRouter.route("/").get(tryCatch(getAllTests)).post(tryCatch(createTest));
-
+testRouter.route("/").post(tryCatch(createTest))
+.get(tryCatch(getAllTests));
 testRouter
   .route("/:id")
   .get(tryCatch(getTestById))
