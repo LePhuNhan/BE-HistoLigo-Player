@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { questionType, answer } from "../constants/question.constant.js";
+import { questionStatus } from "../constants/question.constant.js";
 const { Schema, model } = mongoose;
 
 const baseOptions = {
@@ -28,6 +29,11 @@ const questionSchema = new Schema(
         ask: {
             type: String,
             required: true,
+        },
+        status: {
+            type: Number,
+            enum: [questionStatus.active, questionStatus.inactive],
+            default: questionStatus.active,
         },
         localeData: {
             type: Schema.Types.Mixed,
@@ -59,23 +65,11 @@ const multipleChoiceSchema = new Schema({
 
 // Matching Question
 const matchingSchema = new Schema({
-    leftColumn: {
-        type: [String],
-        required: true,
-    },
-    rightColumn: {
-        type: [String],
-        required: true,
-    },
     answer: {
-        type: [{
-            leftColumn: { type: String, required: true },
-            rightColumn: { type: String, required: true }
-        }],
+        type: [Object],
         required: true,
     },
 });
-
 
 // Fill-in-the-Blank Question
 const fillInTheBlankSchema = new Schema({

@@ -7,17 +7,13 @@ import {
   MatchingQuestion,
   FillInTheBlankQuestion,
 } from "../models/question.model.js";
-
-const questionType = {
-  trueFalse: 1,
-  multipleChoice: 0,
-  matching: 2,
-  fillInTheBlank: 3,
-};
+import { questionType } from "../constants/question.constant.js";
+import { shuffle } from "../utils/array.utils.js";
 
 export const checkAnswer = async (req, res) => {
   try {
     const { answer } = req.body;
+    const contentLanguage = req.contentLanguage;
 
     if (!answer || typeof answer !== "object") {
       return res.status(400).json({ message: "Invalid answer format" });
@@ -25,58 +21,64 @@ export const checkAnswer = async (req, res) => {
 
     const { questionId, selectedAnswer } = answer;
 
-    const question = await BaseQuestion.findById(questionId);
+    const question = await BaseQuestion.findById(questionId).lean();
 
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
 
     let isCorrect = false;
+    let correctAnswer = "abc";
+    let userAnswer = "def";
 
     switch (question.questionType) {
       case questionType.trueFalse:
-        const trueFalseQuestion = await TrueFalseQuestion.findById(questionId);
-        isCorrect = Boolean(selectedAnswer) === trueFalseQuestion.answer;
+        isCorrect = Boolean(selectedAnswer) === question.answer;
         break;
       case questionType.multipleChoice:
-        const multipleChoiceQuestion = await MultipleChoiceQuestion.findById(
-          questionId
-        );
-        isCorrect = Number(selectedAnswer) === multipleChoiceQuestion.answer;
+        isCorrect = Number(selectedAnswer) === question.answer;
         break;
       case questionType.matching:
-        const matchingQuestion = await MatchingQuestion.findById(questionId);
-
-        // Helper function to format the answers
         const formatAnswer = (answerArray) =>
           answerArray
-            .map(({ _id, leftColumn = "", rightColumn = "" }) => ({
-              leftColumn,
-              rightColumn,
-            }))
-            .sort(
-              (a, b) =>
-                a.leftColumn.localeCompare(b.leftColumn) ||
-                a.rightColumn.localeCompare(b.rightColumn)
-            );
+            .map((item) => `${item.leftColumn}=${item.rightColumn}`)
+            .join(`\n`);
+        correctAnswer = formatAnswer(
+          question.localeData[contentLanguage].answer
+        );
+        userAnswer = formatAnswer(selectedAnswer);
+        console.log(userAnswer, correctAnswer);
+        console.log(contentLanguage);
+        
+        isCorrect = correctAnswer === userAnswer;
+        // const formatAnswer = (answerArray) =>
+        //   answerArray
+        //     .map(({ _id, leftColumn = "", rightColumn = "" }) => ({
+        //       leftColumn,
+        //       rightColumn,
+        //     }))
+        //     .sort(
+        //       (a, b) =>
+        //         a.leftColumn.localeCompare(b.leftColumn) ||
+        //         a.rightColumn.localeCompare(b.rightColumn)
+        //     );
 
-        const storedAnswerFormatted = formatAnswer(matchingQuestion.answer);
-        const selectedAnswerFormatted = formatAnswer(selectedAnswer);
+        // const storedAnswerFormatted = formatAnswer(matchingQuestion.answer);
+        // const selectedAnswerFormatted = formatAnswer(selectedAnswer);
 
-        isCorrect =
-          JSON.stringify(storedAnswerFormatted) ===
-          JSON.stringify(selectedAnswerFormatted);
+        // isCorrect =
+        //   JSON.stringify(storedAnswerFormatted) ===
+        //   JSON.stringify(selectedAnswerFormatted);
         break;
 
       case questionType.fillInTheBlank:
-        const fillInTheBlankQuestion = await FillInTheBlankQuestion.findById(
-          questionId
+        const formatFillInAnswer = (answerArray) => answerArray.join(`\n`);
+        correctAnswer = formatFillInAnswer(
+          question.localeData[contentLanguage].answer
         );
-        const formatFillInAnswer = (answerArray) => answerArray.sort();
-
+        userAnswer = formatFillInAnswer(selectedAnswer);
         isCorrect =
-          JSON.stringify(formatFillInAnswer(selectedAnswer)) ===
-          JSON.stringify(formatFillInAnswer(fillInTheBlankQuestion.answer));
+          correctAnswer===userAnswer
         break;
       default:
         return res.status(400).json({ message: "Invalid question type" });
@@ -100,7 +102,7 @@ export const checkAnswer = async (req, res) => {
 export const getTestDetailsAndQuestions = async (req, res) => {
   try {
     const { testId } = req.params;
-
+    const contentLanguage = req.contentLanguage;
     const test = await Test.findById(testId);
 
     if (!test) {
@@ -113,8 +115,25 @@ export const getTestDetailsAndQuestions = async (req, res) => {
 
     const questions = await BaseQuestion.find({
       _id: { $in: test.questionsId },
-    }).select("-answer");
+    }).lean();
+    for (const question of questions) {
+      question.ask = question.localeData[contentLanguage].ask;
 
+      if (question.questionType == questionType.multipleChoice) {
+        question.option = question.localeData[contentLanguage].option;
+      }
+      if (question.questionType == questionType.matching) {
+        question.leftColumn = question.localeData[contentLanguage].answer.map(
+          (item) => item.leftColumn
+        );
+        question.rightColumn = question.localeData[contentLanguage].answer.map(
+          (item) => item.rightColumn
+        );
+        shuffle(question.rightColumn);
+      }
+      question.answer = undefined;
+      question.localeData = undefined;
+    }
     console.log("Questions found:", questions);
 
     return res.status(200).json({
