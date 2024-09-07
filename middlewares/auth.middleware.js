@@ -7,7 +7,6 @@ dotenv.config();
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
-// Middleware to verify JWT token
 export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -30,7 +29,6 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-// Middleware to validate login request
 export const validateLoginRequest = async (req, res, next) => {
   const __ = applyRequestLanguage(req);
   const schema = Joi.object({

@@ -23,7 +23,7 @@ const validToken = async (req, res, next) => {
         userId: user.userId,
         access_token: accessToken,
         refresh_token: refreshToken,
-      }; // need to access the protected route
+      };
       return next();
     }
   }
@@ -51,7 +51,7 @@ const validToken = async (req, res, next) => {
       userId: decoded.userId,
       access_token: newAccessToken,
       refresh_token: refreshToken,
-    }; //need to access the protected route
+    };
     return next();
   }
 };

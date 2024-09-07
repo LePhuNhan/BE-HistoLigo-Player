@@ -11,7 +11,7 @@ const token = {
     return jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         console.error("JWT verification failed:", err.message);
-        // sẽ cso thêm logic kiểm tra với RF để cấp lại token
+        // sẽ có thêm logic kiểm tra với RF để cấp lại token
         throw new Error(err.message);
       } else {
         return decoded;

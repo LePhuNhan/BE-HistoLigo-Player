@@ -57,7 +57,6 @@ export const updateFeedbackStatus = async (req, res) => {
   }
 };
 
-// Delete feedback by ID
 export const deleteFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.findByIdAndDelete(req.params.id);

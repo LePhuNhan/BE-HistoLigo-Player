@@ -5,7 +5,6 @@ export const createCountry = async (req, res) => {
     try {
         const { name, description, image, status, localeData } = req.body;
 
-        // Basic validation
         if (!name || !description || !image || status === undefined || !localeData) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -22,7 +21,6 @@ export const createCountry = async (req, res) => {
             return res.status(400).json({ message: "Status must be 0 or 1" });
         }
 
-        // Check for unique name
         const existingCountry = await Country.findOne({ name });
         if (existingCountry) {
             return res.status(400).json({ message: "Country name already exists" });
@@ -70,7 +68,6 @@ export const updateCountry = async (req, res) => {
             return res.status(404).json({ message: "Country not found" });
         }
 
-        // Basic validation
         if (!name || !description || !image || status === undefined || !localeData) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -87,7 +84,6 @@ export const updateCountry = async (req, res) => {
             return res.status(400).json({ message: "Status must be 0 or 1" });
         }
 
-        // Check for unique name
         const existingCountry = await Country.findOne({ name});
         if (existingCountry) {
             return res.status(400).json({ message: "Country name already exists" });

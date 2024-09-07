@@ -64,8 +64,6 @@ const userController = {
     try {
       const { userName, password } = req.body;
 
-
-      // Check if user exists
       const crrUser = await playerModel.findOne({ userName });
       if (!crrUser) {
         return res
@@ -73,8 +71,6 @@ const userController = {
           .send({ message: "Sai tài khoản" });
       }
 
-
-      // Compare passwords
       const isPasswordValid = bcrypt.compareSync(password, crrUser.password);
       if (!isPasswordValid) {
         return res
@@ -83,16 +79,12 @@ const userController = {
           
       }
 
-
-      // Remove sensitive information from user data
       const userResponse = {
         ...crrUser.toObject(),
       };
       delete userResponse.password;
       delete userResponse.salt;
 
-
-      // Generate tokens
       const tkAt = token.generateToken(
         {
           userName: crrUser.userName,
@@ -112,8 +104,6 @@ const userController = {
         { expiresIn: "2h" }
       );
 
-
-      // Send response
       res.status(200).send({
         data: {
           player: userResponse,
