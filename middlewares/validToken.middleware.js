@@ -39,7 +39,7 @@ const validToken = async (req, res, next) => {
       { PlayerId: Player._id, userId: Player.userId },
       process.env.ACCESS_KEY,
       {
-        expiresIn: "5m",
+        expiresIn: "50m",
       }
     );
     res.cookie("access_token", newAccessToken, {

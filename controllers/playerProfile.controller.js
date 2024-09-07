@@ -5,11 +5,11 @@ import PlayerModel from "../models/player.model.js";
 export const addPlayerProfile = async (req, res, next) => {
   try {
     const player = new PlayerModel(req.body);
-    const {email, username}=req.body
-    const existedPlayer = await PlayerModel.findOne({ email, username});
-      if (existedPlayer) {
-        return res.status(400).json({ message: "Player already exists!" });
-      }
+    const { email, username } = req.body;
+    const existedPlayer = await PlayerModel.findOne({ email, username });
+    if (existedPlayer) {
+      return res.status(400).json({ message: "Player already exists!" });
+    }
     await player.save();
     res.status(201).json({ message: "Player created successfully", player });
   } catch (error) {
@@ -19,9 +19,9 @@ export const addPlayerProfile = async (req, res, next) => {
 export const getPlayerProfile = async (req, res, next) => {
   try {
     const playerId = req.user._id;
-    const player = await PlayerModel.findById(playerId).select('-password');
+    const player = await PlayerModel.findById(playerId).select("-password");
     if (!player) {
-      return res.status(404).json({ message: 'Player not found' });
+      return res.status(404).json({ message: "Player not found" });
     }
 
     res.status(200).json(player);
@@ -32,12 +32,18 @@ export const getPlayerProfile = async (req, res, next) => {
 
 export const updatePlayerProfile = async (req, res, next) => {
   try {
-    const {email, username}=req.body
-    const existedPlayer = await PlayerModel.findOne({ email, username});
-      if (existedPlayer) {
-        return res.status(400).json({ message: "Already have this email, username!" });
-      }
-    const player = await PlayerModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password');
+    const { email } = req.body;
+    const existedPlayer = await PlayerModel.findOne({ email });
+    if (existedPlayer) {
+      return res
+        .status(400)
+        .json({ message: "Already have this email!" });
+    }
+    const player = await PlayerModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).select("-password");
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }

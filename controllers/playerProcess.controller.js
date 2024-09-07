@@ -1,5 +1,6 @@
 import PlayerProcess from "../models/playerProcess.model.js";
 import Topic from "../models/topic.model.js";
+import Test from "../models/test.model.js";
 
 export const createPlayerProcess = async (req, res) => {
   const { playerId, countryId, topics, tests } = req.body;
@@ -126,28 +127,44 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
       return res.status(404).json({ message: "Player process not found" });
     }
 
-    topics.forEach((incomingTopic) => {
+    // Process each topic from the request
+    for (const incomingTopic of topics) {
       const existingTopicIndex = playerProcess.topics.findIndex(
         (topic) => String(topic.topicId) === String(incomingTopic.topicId)
       );
-      console.log(existingTopicIndex);
+      console.log(playerProcess.topics.map(t => t.topicId));
       
+      // Fetch all tests for the current topic
+      const testsByTopic = await Test.find({ topicId: incomingTopic.topicId });
+
       if (existingTopicIndex !== -1) {
+        // Update existing topic
         const existingTopic = playerProcess.topics[existingTopicIndex];
 
-        incomingTopic.tests.forEach((incomingTest) => {
-          const existingTestIndex = existingTopic.tests.findIndex(
-            (test) => String(test.testId) === String(incomingTest.testId)
-          );
-
-          if (existingTestIndex !== -1) {
-            existingTopic.tests[existingTestIndex].score = incomingTest.score;
-            existingTopic.tests[existingTestIndex].time = incomingTest.time;
-          } else {
-            existingTopic.tests.push(incomingTest);
+        // Add new tests that are not already in the topic
+        testsByTopic.forEach((dbTest) => {
+          if (!existingTopic.tests.some((test) => String(test.testId) === String(dbTest._id))) {
+            existingTopic.tests.push({
+              testId: dbTest._id,
+              score: 0,
+              time: 0,
+            });
           }
         });
 
+        // Update existing tests with scores and times from the request
+        incomingTopic.tests.forEach((incomingTest) => {
+          const existingTest = existingTopic.tests.find(
+            (test) => String(test.testId) === String(incomingTest.testId)
+          );
+
+          if (existingTest) {
+            existingTest.score = incomingTest.score;
+            existingTest.time = incomingTest.time;
+          }
+        });
+
+        // Update topic stats
         existingTopic.totalTest = existingTopic.tests.length;
         existingTopic.doneTest = existingTopic.tests.filter(
           (test) => test.score !== null && test.score > 0
@@ -155,20 +172,40 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
 
         playerProcess.topics[existingTopicIndex] = existingTopic;
       } else {
-        playerProcess.topics.push({
-          ...incomingTopic,
-          totalTest: incomingTopic.tests.length,
-          doneTest: incomingTopic.tests.filter(
-            (test) => test.score !== null && test.score > 0
-          ).length,
-        });
-      }
-    });
+        // Add new topic
+        const newTopic = {
+          topicId: incomingTopic.topicId,
+          tests: testsByTopic.map((dbTest) => ({
+            testId: dbTest._id,
+            score: 0,
+            time: 0,
+          })),
+          totalTest: testsByTopic.length,
+          doneTest: 0,
+        };
 
+        // Update new topic with scores and times from the request
+        incomingTopic.tests.forEach((incomingTest) => {
+          const test = newTopic.tests.find(
+            (test) => String(test.testId) === String(incomingTest.testId)
+          );
+
+          if (test) {
+            test.score = incomingTest.score;
+            test.time = incomingTest.time;
+          }
+        });
+
+        playerProcess.topics.push(newTopic);
+      }
+    }
+
+    // Update countryId if provided
     if (countryId) {
       playerProcess.countryId = countryId;
     }
 
+    // Save updated player process
     const updatedPlayerProcess = await playerProcess.save();
 
     res.status(200).json({
@@ -183,6 +220,7 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
     });
   }
 };
+
 
 
 export const deletePlayerProcessById = async (req, res) => {
