@@ -33,20 +33,29 @@ export const getPlayerProfile = async (req, res, next) => {
 export const updatePlayerProfile = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const existedPlayer = await PlayerModel.findOne({ email });
+    const playerId = req.user._id;
+
+    const existedPlayer = await PlayerModel.findOne({
+      email,
+      _id: { $ne: playerId },
+    });
+
     if (existedPlayer) {
       return res
         .status(400)
-        .json({ message: "Already have this email!" });
+        .json({ message: "Email is already in use by another account!" });
     }
+
     const player = await PlayerModel.findByIdAndUpdate(
-      req.params.id,
+      playerId,
       req.body,
       { new: true }
     ).select("-password");
+
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
+
     res.status(200).json({ message: "Player updated successfully", player });
   } catch (error) {
     res.status(500).json({ message: error.message });

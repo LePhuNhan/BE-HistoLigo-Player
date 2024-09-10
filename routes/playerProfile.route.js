@@ -19,5 +19,5 @@ playerRouter
 playerRouter
   .route("/:id")
   .get(tryCatch(getPlayerProfile))
-  .put(tryCatch(updatePlayerProfile));
+  .put(verifyToken, tryCatch(updatePlayerProfile));
 export default playerRouter;

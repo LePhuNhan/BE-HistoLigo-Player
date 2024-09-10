@@ -37,6 +37,10 @@ const userController = {
       if (existedUserName) {
         return res.status(400).json({ message: "UserName đã tồn tại!!" });
       }
+      const existedEmail = await playerModel.findOne({ email });
+      if (existedEmail) {
+        return res.status(400).json({ message: "Email đã tồn tại!!" });
+      }
       //tạo chuỗi ngẫu nhiên
       const salt = bcrypt.genSaltSync();
       //thực hiện mã hóa
