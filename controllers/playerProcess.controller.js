@@ -226,28 +226,38 @@ export const saveTestsResult = async (req, res) => {
   try {
     const playerId = req.user._id;
     const { testId, score, time } = req.body;
+
     const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
     const countryId = test.countryId;
     const topicId = test.topicId;
+
     const playerProcess = await PlayerProcess.findOne({ playerId, countryId });
-    if(!playerProcess){
-      return res.status(404).json({
-        message: "Player Process not found"
-      });
-      
+    if (!playerProcess) {
+      return res.status(404).json({ message: "Player Process not found" });
     }
-    console.log(topicId);
-    console.log(playerProcess);
-    
-    const topicProcess = playerProcess.topics.find(
-      (item) => item.topicId.toString() == topicId.toString()
+
+    let topicProcess = playerProcess.topics.find(
+      (item) => item.topicId.toString() === topicId.toString()
     );
-    console.log(topicProcess);
-    
-    const existTestInTopicProcess = topicProcess.tests.find(
-      (item) => item.testId.toString() == testId.toString()
+
+    if (!topicProcess) {
+      topicProcess = {
+        topicId: topicId,
+        tests: [],
+        doneTest: 0,
+        totalTest: 0,
+      };
+      playerProcess.topics.push(topicProcess);
+    }
+
+    let existTestInTopicProcess = topicProcess.tests.find(
+      (item) => item.testId.toString() === testId.toString()
     );
-    
+
     if (!existTestInTopicProcess) {
       topicProcess.tests.push({
         testId,
@@ -258,8 +268,12 @@ export const saveTestsResult = async (req, res) => {
       existTestInTopicProcess.score = score;
       existTestInTopicProcess.time = time;
     }
+
     topicProcess.doneTest = topicProcess.tests.length;
+    topicProcess.totalTest = topicProcess.totalTest || 0;
+
     await playerProcess.save();
+
     return res
       .status(200)
       .json({ message: "Player process updated successfully", playerProcess });
@@ -270,3 +284,4 @@ export const saveTestsResult = async (req, res) => {
     });
   }
 };
+
