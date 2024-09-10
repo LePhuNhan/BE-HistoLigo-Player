@@ -160,10 +160,8 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
     for (const topic of topics) {
       const { topicId, tests } = topic;
 
-      // Find the tests for the current topicId
       const foundTests = await Test.find({ topicId });
 
-      // Update or add the topic in playerProcess
       let playerTopic = playerProcess.topics.find(
         (t) => t.topicId.toString() === topicId
       );
@@ -179,21 +177,17 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
         playerTopic.totalTest = foundTests.length;
       }
 
-      // Create a map of existing test IDs in playerTopic to avoid duplication
       const existingTestIds = new Set(
         playerTopic.tests.map((t) => t.testId.toString())
       );
 
-      // Update or add the tests in the playerTopic
       for (const test of tests) {
         const { testId, score, time } = test;
 
         if (!existingTestIds.has(testId.toString())) {
-          // Add new test
           playerTopic.tests.push({ testId, score, time });
           existingTestIds.add(testId.toString());
         } else {
-          // Update existing test
           let playerTest = playerTopic.tests.find(
             (t) => t.testId.toString() === testId
           );
@@ -204,11 +198,9 @@ export const updatePlayerProcessWithPlayerId = async (req, res) => {
         }
       }
 
-      // Update doneTest count
       playerTopic.doneTest = playerTopic.tests.length;
     }
 
-    // Save the updated player process
     await playerProcess.save();
 
     res
@@ -226,36 +218,27 @@ export const saveTestsResult = async (req, res) => {
   try {
     const playerId = req.user._id;
     const { testId, score, time } = req.body;
-
     const test = await Test.findById(testId);
-    if (!test) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-
     const countryId = test.countryId;
     const topicId = test.topicId;
-
     const playerProcess = await PlayerProcess.findOne({ playerId, countryId });
-    if (!playerProcess) {
-      return res.status(404).json({ message: "Player Process not found" });
-    }
+    if(!playerProcess){
+      return res.status(404).json({
+        message: "Player Process not found"
+      });
+    } 
 
-    let topicProcess = playerProcess.topics.find(
-      (item) => item.topicId.toString() === topicId.toString()
+    const topicProcess = playerProcess.topics.find(
+      (item) => item.topicId.toString() == topicId.toString()
     );
+    if(!topicProcess){
+      return res.status(404).json({
+        message: "TopicId not found"
+      });
+    } 
 
-    if (!topicProcess) {
-      topicProcess = {
-        topicId: topicId,
-        tests: [],
-        doneTest: 0,
-        totalTest: 0,
-      };
-      playerProcess.topics.push(topicProcess);
-    }
-
-    let existTestInTopicProcess = topicProcess.tests.find(
-      (item) => item.testId.toString() === testId.toString()
+    const existTestInTopicProcess = topicProcess.tests.find(
+      (item) => item.testId.toString() == testId.toString()
     );
 
     if (!existTestInTopicProcess) {
@@ -268,12 +251,8 @@ export const saveTestsResult = async (req, res) => {
       existTestInTopicProcess.score = score;
       existTestInTopicProcess.time = time;
     }
-
     topicProcess.doneTest = topicProcess.tests.length;
-    topicProcess.totalTest = topicProcess.totalTest || 0;
-
     await playerProcess.save();
-
     return res
       .status(200)
       .json({ message: "Player process updated successfully", playerProcess });
