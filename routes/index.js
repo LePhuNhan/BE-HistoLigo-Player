@@ -1,7 +1,7 @@
 import playerRouter from "./playerProfile.route.js";
 import loadRequestContentLanguage from "../middlewares/localization.middleware.js"
 import topicRouter from "./topic.route.js";
-import languageRouter from "./topic.route.js";
+// import languageRouter from "./topic.route.js";
 import countryRouter from "./country.route.js";
 import documentationRouter from "./documentation.route.js";
 import testRouter from "./test.route.js";
@@ -10,6 +10,7 @@ import questionRouter from "./question.route.js"
 import PlayerTestRouter from "./playerTest.route.js";
 import FeedbackRouter from "./feedback.route.js"
 import classRouter from "./class.route.js";
+import userRouter from "./player.route.js";
 
 const routes = [
   {
@@ -20,10 +21,10 @@ const routes = [
     path: "/topic",
     router: topicRouter,
   },
-  {
-    path: "/language",
-    router: languageRouter,
-  },
+  // {
+  //   path: "/language",
+  //   router: languageRouter,
+  // },
   {
     path: "/country",
     router: countryRouter,
@@ -55,6 +56,10 @@ const routes = [
   {
     path: "/class",
     router: classRouter
+  },
+  {
+    path: "/user",
+    router: userRouter
   }
 ];
 
@@ -66,9 +71,9 @@ export function routeFactory(app) {
     if (route.path === "/topic") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
-    if (route.path === "/language") {
-      app.use(route.path, loadRequestContentLanguage, route.router);
-    }
+    // if (route.path === "/language") {
+    //   app.use(route.path, loadRequestContentLanguage, route.router);
+    // }
     if (route.path === "/country") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
@@ -91,6 +96,9 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/class") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/user") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });

@@ -20,9 +20,9 @@ const topicSchema = new Schema(
             required: true,
             maxLength: 1000,
         },
-        countryId: {
+        classId: {
             type: Schema.Types.ObjectId,
-            ref: "Country",
+            ref: "Class",
             required: true,
         },
         status: {

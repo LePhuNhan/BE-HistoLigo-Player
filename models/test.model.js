@@ -26,9 +26,9 @@ const testSchema = new Schema(
             ref: "Topic",
             require: true,
         },
-        countryId: {
+        classId: {
             type: Schema.Types.ObjectId,
-            ref: "Country",
+            ref: "Class",
             require: true,
         },
         status: {

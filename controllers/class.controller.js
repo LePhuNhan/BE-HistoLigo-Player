@@ -34,10 +34,10 @@ export const createClass = async (req, res) => {
     }
 };
 
-export const getCountries = async (req, res) => {
+export const getClasses = async (req, res) => {
     try {
-        const countries = await Class.find();
-        res.status(200).json(countries);
+        const classes = await Class.find();
+        res.status(200).json(classes);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -49,11 +49,11 @@ export const getClassById = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(404).json({ message: "Class not found" });
         }
-        const country = await Class.findById(id);
-        if (!country) {
+        const Class = await Class.findById(id);
+        if (!Class) {
             return res.status(404).json({ message: "Class not found" });
         }
-        res.status(200).json(country);
+        res.status(200).json(Class);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

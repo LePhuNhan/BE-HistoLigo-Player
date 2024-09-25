@@ -1,17 +1,12 @@
-import { Router } from "express";
+import express from "express";
 import userController from "../controllers/player.controller.js";
-import middlewares from "../middlewares/player.middleware.js";
-import { verifyToken, validateLoginRequest } from '../middlewares/auth.middleware.js';
-const UserRouter = Router();
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
-UserRouter.get(
-  "/users/:id",
-  middlewares.verifyJwt(),
-  userController.getOneUser
-);
+const playerRouter = express.Router();
 
-UserRouter.post("/users", userController.createUser, middlewares.verifyJwt());
-UserRouter.post("/login", validateLoginRequest, userController.login);
-UserRouter.post("/logout", userController.logout);
+playerRouter.post("/register", userController.createUser);
+playerRouter.post("/login", userController.login);
+playerRouter.post("/logout", verifyToken, userController.logout);
+playerRouter.get("/:id", verifyToken, userController.getOneUser);
 
-export default UserRouter;
+export default playerRouter;

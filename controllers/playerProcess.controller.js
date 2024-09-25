@@ -226,8 +226,8 @@ export const saveTestsResult = async (req, res) => {
       return res.status(404).json({
         message: "Player Process not found"
       });
-    } 
-
+    }
+    
     const topicProcess = playerProcess.topics.find(
       (item) => item.topicId.toString() == topicId.toString()
     );

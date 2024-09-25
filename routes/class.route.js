@@ -1,7 +1,7 @@
 import express from 'express';
 import {
     createClass,
-    getCountries,
+    getClasses,
     getClassById,
     updateClass,
     deleteClass,
@@ -11,7 +11,7 @@ import { tryCatch } from "../middlewares/tryCatch.middleware.js";
 const classRouter = express.Router();
 
 classRouter.route("/")
-    .get(tryCatch(getCountries))
+    .get(tryCatch(getClasses))
     .post(tryCatch(createClass));
 
 classRouter

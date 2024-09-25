@@ -44,9 +44,9 @@ const playerProcessSchema = new Schema(
       ref: "Player",
       required: true,
     },
-    countryId: {
+    classId: {
       type: Schema.Types.ObjectId,
-      ref: "Country",
+      ref: "Class",
       required: true,
     },
     topics: {

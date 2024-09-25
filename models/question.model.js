@@ -16,9 +16,9 @@ const questionSchema = new Schema(
             ref: "Topic",
             required: true,
         },
-        countryId: {
+        classId: {
             type: Schema.Types.ObjectId,
-            ref: "Country",
+            ref: "Class",
             required: true,
         },
         questionType: {
