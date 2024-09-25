@@ -4,15 +4,15 @@ import Test from "../models/test.model.js";
 
 export const createPlayerProcess = async (req, res) => {
   const playerId = req.user._id;
-  const { countryId } = req.body;
+  const { classId } = req.body;
 
   try {
     let existingPlayerProcess = await PlayerProcess.findOne({
       playerId,
-      countryId,
+      classId,
     });
     if (!existingPlayerProcess) {
-      const topics = await Topic.find({ countryId });
+      const topics = await Topic.find({ classId });
       const testCountInTopics = [];
       for (const topic of topics) {
         const testCount = await Test.countDocuments({ topicId: topic.id });
@@ -26,7 +26,7 @@ export const createPlayerProcess = async (req, res) => {
 
       const newPlayerProcess = new PlayerProcess({
         playerId,
-        countryId,
+        classId,
         topics: testCountInTopics,
       });
 
@@ -45,16 +45,16 @@ export const createPlayerProcess = async (req, res) => {
 export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
   try {
     const playerId = req.user._id;
-    const { countryId } = req.query;
-    console.log(countryId);
+    const { classId } = req.query;
+    console.log(classId);
 
-    const playerProcesses = await PlayerProcess.findOne({ playerId,countryId });
+    const playerProcesses = await PlayerProcess.findOne({ playerId,classId });
     
     if (!playerProcesses) {
       return res.status(200).json([]);
     }
 
-    const topics = await Topic.find({ countryId }).populate("countryId");
+    const topics = await Topic.find({ classId }).populate("classId");
 
     const playerTopicProgressMap = new Map();
     playerProcesses.topics.forEach((topic) => {
@@ -69,7 +69,7 @@ export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
         name: topic.name,
         description: topic.description,
         image: topic.image,
-        countryId: topic.countryId ? topic.countryId._id : null,
+        classId: topic.classId ? topic.classId._id : null,
         status: topic.status,
         totalTest: progress ? progress.totalTest : 0,
         doneTest: progress ? progress.doneTest : 0,
@@ -110,11 +110,11 @@ export const getAllPlayerProcesses = async (req, res) => {
 export const updatePlayerProcessById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { playerId, countryId, topics, tests } = req.body;
+    const { playerId, classId, topics, tests } = req.body;
 
     const updatedPlayerProcess = await PlayerProcess.findByIdAndUpdate(
       id,
-      { playerId, countryId, topics, tests },
+      { playerId, classId, topics, tests },
       { new: true }
     );
 
@@ -150,9 +150,9 @@ export const deletePlayerProcessById = async (req, res) => {
 export const updatePlayerProcessWithPlayerId = async (req, res) => {
   try {
     const playerId = req.user._id;
-    const { countryId, topics } = req.body;
+    const { classId, topics } = req.body;
 
-    let playerProcess = await PlayerProcess.findOne({ playerId, countryId });
+    let playerProcess = await PlayerProcess.findOne({ playerId, classId });
     if (!playerProcess) {
       return res.status(404).json({ message: "Player process not found" });
     }
@@ -219,9 +219,9 @@ export const saveTestsResult = async (req, res) => {
     const playerId = req.user._id;
     const { testId, score, time } = req.body;
     const test = await Test.findById(testId);
-    const countryId = test.countryId;
+    const classId = test.classId;
     const topicId = test.topicId;
-    const playerProcess = await PlayerProcess.findOne({ playerId, countryId });
+    const playerProcess = await PlayerProcess.findOne({ playerId, classId });
     if(!playerProcess){
       return res.status(404).json({
         message: "Player Process not found"

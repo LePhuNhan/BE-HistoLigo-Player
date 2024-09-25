@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 export const createTopic = async (req, res) => {
     try {
-        const { name, description, image, countryId, status, localeData } = req.body;
+        const { name, description, image, classId, status, localeData } = req.body;
         if (!name || !description || !image || status === undefined || !localeData) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -24,7 +24,7 @@ export const createTopic = async (req, res) => {
         if (existingTopic) {
             return res.status(400).json({ message: "Topic name already exists" });
         }
-        const newTopic = new Topic({ name, description, image, countryId, status, localeData });
+        const newTopic = new Topic({ name, description, image, classId, status, localeData });
         
         await newTopic.save();
         res.status(201).json({message: "Topic created successfully", newTopic});
@@ -35,7 +35,7 @@ export const createTopic = async (req, res) => {
 // sau này đổi sang header thử en-US để đổi topic theo language trong localStorage
 export const getTopics = async (req, res) => {
     try {
-        const topics = await Topic.find().populate('countryId');
+        const topics = await Topic.find().populate('classId');
         res.status(200).json(topics);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -48,7 +48,7 @@ export const getTopicById = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(404).json({ message: "Topic not found" });
         }
-        const topic = await Topic.findById(id).populate('countryId');
+        const topic = await Topic.findById(id).populate('classId');
         if (!topic) {
             return res.status(404).json({ message: "Topic not found" });
         }
@@ -61,7 +61,7 @@ export const getTopicById = async (req, res) => {
 export const updateTopic = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, image, countryId, status, localeData } = req.body;
+        const { name, description, image, classId, status, localeData } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(404).json({ message: "Topic not found" });
@@ -88,9 +88,9 @@ export const updateTopic = async (req, res) => {
         }
         const updatedTopic = await Topic.findByIdAndUpdate(
             id,
-            { name, description, image, countryId, status, localeData },
+            { name, description, image, classId, status, localeData },
             { new: true }
-        ).populate('countryId');
+        ).populate('classId');
         if (!updatedTopic) {
             return res.status(404).json({ message: "Topic not found" });
         }
