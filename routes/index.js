@@ -9,6 +9,7 @@ import playerProcessRouter from "./playerProcess.route.js";
 import questionRouter from "./question.route.js"
 import PlayerTestRouter from "./playerTest.route.js";
 import FeedbackRouter from "./feedback.route.js"
+import classRouter from "./class.route.js";
 
 const routes = [
   {
@@ -50,6 +51,10 @@ const routes = [
   {
     path: "/feedback",
     router: FeedbackRouter
+  },
+  {
+    path: "/class",
+    router: classRouter
   }
 ];
 
@@ -83,6 +88,9 @@ export function routeFactory(app) {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
     if (route.path === "/feedback") {
+      app.use(route.path, loadRequestContentLanguage, route.router);
+    }
+    if (route.path === "/class") {
       app.use(route.path, loadRequestContentLanguage, route.router);
     }
   });

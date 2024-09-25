@@ -1,7 +1,7 @@
 import Test from "../models/test.model.js";
 
 export const createTest = async (req, res) => {
-  const { name, createdBy, questionNumber, topicId, countryId, status } =
+  const { name, createdBy, questionNumber, topicId, classId, status } =
     req.body;
     
   try {
@@ -16,7 +16,7 @@ export const createTest = async (req, res) => {
       createdBy,
       questionNumber,
       topicId,
-      countryId,
+      classId,
       status,
     });
 
@@ -64,7 +64,7 @@ export const getTestById = async (req, res) => {
 
 export const updateTest = async (req, res) => {
   const { id } = req.params;
-  const { name, createdBy, questionNumber, topicId, countryId, status, localeData } =
+  const { name, createdBy, questionNumber, topicId, classId, status, localeData } =
     req.body;
   try {
     const existingTest = await Test.findOne({
@@ -75,7 +75,7 @@ export const updateTest = async (req, res) => {
     }
     const updatedTest = await Test.findByIdAndUpdate(
       id,
-      { name, createdBy, questionNumber, topicId, countryId, status, localeData },
+      { name, createdBy, questionNumber, topicId, classId, status, localeData },
       { new: true, runValidators: true }
     );
     if (!updatedTest) {
