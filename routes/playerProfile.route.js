@@ -16,12 +16,12 @@ const playerRouter = express.Router();
 playerRouter
   .route("/")
   .post(tryCatch(addPlayerProfile))
-  .get(tryCatch(getAllPlayersAndRank))
+  .get(verifyToken, tryCatch(getPlayerProfile))
   .put(verifyToken, tryCatch(updatePlayerProfileAndRank));
 
 playerRouter
-  .route("/:id")
-  .get(verifyToken, tryCatch(getPlayerProfile))
+  .route("/rank")
+  .get(tryCatch(getAllPlayersAndRank))
   // .put(verifyToken, tryCatch(updatePlayerProfile));
   
 export default playerRouter;
