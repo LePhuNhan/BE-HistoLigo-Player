@@ -5,6 +5,7 @@ import {
   // updatePlayerProfile,
   updatePlayerProfileAndRank,
   getAllPlayersAndRank,
+  getAllPlayersByRank,
 } from "../controllers/playerProfile.controller.js";
 import { tryCatch } from "../middlewares/tryCatch.middleware.js";
 import {
@@ -23,5 +24,8 @@ playerRouter
   .route("/rank")
   .get(tryCatch(getAllPlayersAndRank))
   // .put(verifyToken, tryCatch(updatePlayerProfile));
-  
+
+  playerRouter
+  .route("/byRank")
+  .get(tryCatch(getAllPlayersByRank));
 export default playerRouter;
