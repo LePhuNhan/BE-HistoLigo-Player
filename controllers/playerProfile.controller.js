@@ -131,3 +131,20 @@ export const getAllPlayersAndRank = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getAllPlayersByRank = async (req, res) => {
+  try {
+    const rank = req.body.rank;
+    const players = await PlayerModel.find({ rank }).select("-password");
+
+    players.sort((a, b) => {
+      if (b.totalScore === a.totalScore) {
+        return a.totalTime - b.totalTime;
+      }
+      return b.totalScore - a.totalScore;
+    });
+
+    res.status(200).json(players);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
