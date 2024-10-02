@@ -104,7 +104,7 @@ export const updatePlayerProfileAndRank = async (req, res) => {
       if (totalScore > 300 && totalScore <= 800) rank = 1;
       else if (totalScore > 800 && totalScore <= 1500) rank = 2;
       else if (totalScore > 1500 && totalScore <= 2500) rank = 3;
-      else if (totalScore > 2500 && totalScore <= 4000) rank = 4;
+      else if (totalScore > 2500) rank = 4;
 
       player.rank = rank;
       await player.save();
