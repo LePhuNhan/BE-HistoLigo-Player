@@ -98,8 +98,8 @@ export const updatePlayerProfileAndRank = async (req, res) => {
           totalTime += parseInt(test.time);
         });
       });
-      player.totalScore = totalScore;
-      player.totalTime = totalTime;
+      player.totalScore = totalScore.toFixed(2);
+      player.totalTime = totalTime.toFixed(2);
       let rank = 0;
       if (totalScore > 300 && totalScore <= 800) rank = 1;
       else if (totalScore > 800 && totalScore <= 1500) rank = 2;
