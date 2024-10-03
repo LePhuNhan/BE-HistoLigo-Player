@@ -133,7 +133,7 @@ export const getAllPlayersAndRank = async (req, res) => {
 };
 export const getAllPlayersByRank = async (req, res) => {
   try {
-    const rank = req.body.rank;
+    const rank = req.query.rank;
     const players = await PlayerModel.find({ rank }).select("-password");
 
     players.sort((a, b) => {
