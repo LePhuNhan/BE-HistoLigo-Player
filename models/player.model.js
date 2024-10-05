@@ -35,7 +35,7 @@ const PlayerSchema = mongoose.Schema({
   },
   avatar: {
     type: String,
-    maxlength: 1000,
+    required: false,
     default: null,
   },
   totalScore: {
