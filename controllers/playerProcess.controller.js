@@ -46,7 +46,6 @@ export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
   try {
     const playerId = req.user._id;
     const { classId } = req.query;
-    console.log(classId);
 
     const playerProcesses = await PlayerProcess.findOne({ playerId,classId });
     
@@ -60,7 +59,15 @@ export const getCombinedTopicsWithPlayerProgress = async (req, res) => {
     playerProcesses.topics.forEach((topic) => {
       playerTopicProgressMap.set(topic.topicId.toString(), topic);
     });
-
+    
+    const contentLanguage = req.contentLanguage;
+    if (contentLanguage) {
+      topics.forEach((topic) => {
+        topic.name = topic.localeData[contentLanguage]?.name || topic.name;
+        topic.description = topic.localeData[contentLanguage]?.description || topic.description;
+        topic.localeData = undefined;
+      });
+    }
     const combinedTopics = topics.map((topic) => {
       const progress = playerTopicProgressMap.get(topic._id.toString());
 
