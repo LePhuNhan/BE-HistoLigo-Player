@@ -104,7 +104,6 @@ export const getTestDetailsAndQuestions = async (req, res) => {
     const { testId } = req.params;
     const contentLanguage = req.contentLanguage;
     const test = await Test.findById(testId);
-
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
@@ -120,7 +119,8 @@ export const getTestDetailsAndQuestions = async (req, res) => {
       question.ask = question.localeData[contentLanguage].ask;
 
       if (question.questionType == questionType.multipleChoice) {
-        question.option = question.localeData[contentLanguage].option;
+        question.options = question.localeData[contentLanguage].options;
+        console.log("Questions found:", question.localeData[contentLanguage].options);
       }
       if (question.questionType == questionType.matching) {
         question.leftColumn = question.localeData[contentLanguage].answer.map(
@@ -134,7 +134,7 @@ export const getTestDetailsAndQuestions = async (req, res) => {
       question.answer = undefined;
       question.localeData = undefined;
     }
-    console.log("Questions found:", questions);
+    // console.log("Questions found:", questions);
 
     return res.status(200).json({
       test,
